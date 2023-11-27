@@ -1,7 +1,46 @@
-import React from 'react';
+import React, { useState, useEffect, createContext, useContext } from "react";
 
-const HouseContext = () => {
-  return <div>HouseContext</div>;
+// import data
+import { housesData } from "../data";
+
+// create context
+const HouseContext = createContext();
+
+const HousesProvider = ({ children }) => {
+  const [houses, setHouses] = useState(housesData);
+  const [country, setCountry] = useState("Location (any)");
+  const [countries, setCountries] = useState([]);
+  const [property, setProperty] = useState("Property type (any)");
+  const [properties, setProperties] = useState([]);
+  const [price, setPrice] = useState("Price range (any)");
+  const [loading, setLoading] = useState(false);
+
+  return (
+    <HouseContext.Provider
+      value={{
+        country,
+        setCountry,
+        countries,
+        property,
+        setProperty,
+        properties,
+        price,
+        setPrice,
+        houses,
+        loading,
+      }}
+    >
+      {children}
+    </HouseContext.Provider>
+  );
 };
 
-export default HouseContext;
+function useHouses() {
+  const context = useContext(HouseContext);
+  if (context === undefined) {
+    throw new Error("HouseContext was used outside of the HousesProvider");
+  }
+  return context;
+}
+
+export { HousesProvider, useHouses };
